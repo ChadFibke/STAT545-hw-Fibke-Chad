@@ -1,0 +1,254 @@
+---
+title: "HW03_GGPLOT2"
+author: "Chad Fibke"
+date: '2017-10-11'
+output: github_document
+---
+
+# 1.Installation of data set and data analysis packages 
+
+```{r}
+library(gapminder)
+library(tidyverse)
+```
+Ok, everything is ready to rock and roll.
+
+
+Just a quick note, comments about my code will be at the bottom of code chunks:
+```{r}
+# Like this 
+```
+and comments about my workflow will be outside of the code chunks. 
+
+# 2.Deep Data Dive
+
+## 2.A "Get the maximum and minimum of GDP per capita for all continents"
+
+ 
+Lets get the values of these GDP per capitas for each continent over all the years.
+
+
+```{r MIN.MAX.Table, echo=TRUE}
+Continent.range <- gapminder %>%
+  group_by(continent, year) %>% 
+  summarise(Min_gdpPercapita = min(gdpPercap), Max_gdpPercapita = max(gdpPercap)) 
+
+
+
+knitr::kable(head(Continent.range))
+
+```
+
+The above table shows both the Min, and Max GDP/capita for every continent for every year. 
+
+So now lets plot this:
+
+```{r MIN.MAX.linegraph, echo=TRUE}
+ggplot(Continent.range, aes(x = year))+
+  geom_line(mapping = aes(y = Min_gdpPercapita, color = "Min_gdpPercapita"))+
+   geom_line(mapping = aes( y = Max_gdpPercapita, color = "Max_gdpPercapita"))+
+  scale_colour_manual( "", values = c("Min_gdpPercapita" = "red", "Max_gdpPercapita" = "green"))+
+  facet_wrap(~continent)+
+  theme_bw()+
+   ggtitle("The Minimum and Maximum GDP Per Capita Over Time")+
+   ylab("GDP Per Capita")+
+   theme(axis.text.x = element_text(angle = 90))
+
+
+# I first set an initial plot with an x variable, and then I layered on the min and max as separate y variables layers.
+# I colored each layer by the corresponding Y variable then had to manually set the colors to create a ledged.
+
+```
+
+The scale_colour_manual trick was learned [here](https://stackoverflow.com/questions/10349206/add-legend-to-ggplot2-line-plot).
+The rotation of the x axis was learned [over here](https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2)
+
+ This plot shows us that:
+
++ Most of the continent's min GDP Per Capita do not increase over the years. Only the Oceania experiences a gradual increase in both Min/Max.
++ The max GDP Per Capita increases in most continents as the years progress.
+
++ Taken together, most continents have countries that are consistently performing poorly, and have some countries that are progressively preforming better.  
+
+
+## 2.B"Look at the spread of GDP per capita within the continents/Find countries with interesting stories."
+
+Lets look at a generic distribution of the GDP per capita in one go
+
+```{r Basic.plot, echo=TRUE}
+ggplot(gapminder, aes( x = continent, y = gdpPercap))+
+  geom_violin(aes(fill = continent), color = "black")+
+  scale_y_log10()+
+   theme_classic()+
+   ggtitle(" GDP Per Capita of the World!")+
+   geom_hline(aes(yintercept = median(gapminder$gdpPercap)))
+
+
+# I added a black line to show the median gdp per capita of the whole world. This line will hopefully aid in comparing how each continent is performing.
+
+# The above graph uses violin function, which is a Frankenstein of a box plot combined with a density curve. This plot shows us the distribution of every observation within each continent.
+```
+
+
+
+
+Lets try to figure out why Asia has such a large distribution. Is it that Asian countries started off doing poorly and worked there way up? (stay tuned):
+
+```{r Asian.lineplot, echo=TRUE}
+Asian.GDP <- gapminder %>%
+  select(continent, country, year, gdpPercap) %>%
+  filter(continent == "Asia")
+
+knitr::kable(head(Asian.GDP))
+
+Asian.GDP %>%  ggplot( aes( x = year, y = gdpPercap, group=country)) +
+  geom_line(aes(color = country), alpha = 0.5)+
+  ggtitle(" GDP Per Capita within Asia")
+
+```
+
+ 
+The table shows the GDP Per Capita values for all Asian countries. This messy plot shows some extreme outliers that are contributing to the massive spread within Asia. 
+
+I will now proceed by finding which countries are contributing to the large distribution by selecting the early years where these outliers are most prominent.
+
+```{r who.is.there, echo=TRUE}
+Asian.GDP %>%
+  filter(gdpPercap > 90000  | gdpPercap < 500, year %in% 1950:1970) %>%
+  select(country, year, gdpPercap) %>%
+  arrange(country, gdpPercap) 
+
+# I looked for countries in early years with either an extremely high Gdp/capita, or a extremely low Gdp/capita.
+
+
+
+```
+
+This step was used to determine which countries are stretching the distribution. It shows that Cambodia, China, Myanmar, and Kuwait are extreme outliers! 
+
+Now I will select for all these influential country observations and plot them
+
+```{r The.outliers, echo=TRUE}
+Influential.Countries <- Asian.GDP %>%
+  filter(country %in% c("Cambodia","China", "Kuwait", "Myanmar")) 
+
+knitr::kable(Influential.Countries)
+
+median.value <- median(Asian.GDP$gdpPercap)
+
+# This is the median for all Asian countries and will be plotted below 
+  
+  ggplot(Influential.Countries, aes(x = country, y = gdpPercap))+
+  geom_point(aes(color = country))+
+ geom_text(aes(label=ifelse(gdpPercap>median.value & gdpPercap < 10000 ,as.character(year),''),hjust=1))+
+  geom_hline(aes(yintercept = median.value))+
+ geom_hline(aes(yintercept = median(gapminder$gdpPercap)), color = "red")+
+  scale_y_log10()+
+  theme_classic()+
+    ggtitle(" GDP Per Capita For early Asian countries")
+
+  
+# The red line is the median for the world GDP Per Capita (we saw this above).
+# The black represents the median for all Asian counties. Both these lines are used to see how weird these counties are!
+  
+# I added a text label to years that were above the median for all Asian counties (black line), but were also in the "non-weird range".
+
+ 
+```
+
+This tables shows all the observations (over all years) for the outlier countries: Cambodia, China, Myanmar, and Kuwait. 
+
+The plot shows:
+
++ Cambodia and Myanmar are well below both the world median (red), and the Asian median (black) over all years data was collected.
++ China is below both the world median (red), and the Asian median (black) over most years. However, China does exceed both these medians in 2007!
++ Kuwait is well above both of these medians for the duration of the study! We actually see that Kuwait is the country that contributes to the MAX GDP Per Capita in 2.A. 
+
+All of these counties are the weirdos, except China, which becomes more typical over time!
+
+## 2.C"Make up your own!"
+
+### I'm going to attepmt to see how population growth rate changes for some developed and developing countries!
+
+Lets first wrangle some of the countries of interest so we aren’t overloaded with data
+
+```{r}
+Selected.Countries <- gapminder %>%
+  select(continent, country, year, pop) %>%
+  filter(country %in% c("Canada", "Japan", "Mexico", "Algeria"))
+```
+Now that I have the selected countries I will calculate the population growth rate as a quotient. This quotient is calculated by (pop at time 1/ pop at time 0). If we get a quotient of 1.1 we have a 10% growth rate.
+
+
+lets start by grouping and creating this quotient
+```{r Growth.Rate.Table, echo=TRUE}
+Pop.Growth.Rate <- Selected.Countries %>%
+  group_by(country) %>%
+  arrange(country, year) %>%
+  mutate(Lagged.pop = lag(pop, 1), Growth.Rate = pop /lag(pop, 1))
+
+# I first group by country so the quotient would be calculated within each country, and I made sure the years were ordered properly 
+# I then created the new growth rate by dividing the population vector by a lagged population vector. The table below demonstrates this division in a horizontal manor [ pop(t1) / legged pop(t0)]
+
+knitr::kable(Pop.Growth.Rate)
+
+
+```
+
+
+
+The table demonstrates the calculation of the quotient in a horizontal manor [ pop(t1) / legged pop(t0)], **AND** also shows us the growth rate for these countries over time!
+
+```{r Growth.Rate.Plot, echo=TRUE}
+ggplot(Pop.Growth.Rate, aes(x = year, y = Growth.Rate))+
+  geom_path(aes( color = country, lty = country))+
+  geom_point(aes(color = country))+
+  theme_classic()+
+   ggtitle("Population growth rates over time")+
+  theme(legend.background = element_rect( linetype="solid",colour ="black"))
+  
+# It will remove 4 rows, which are the starting populations for each country
+```
+
+I went [here](http://www.sthda.com/english/wiki/ggplot2-legend-easy-steps-to-change-the-position-and-the-appearance-of-a-graph-legend-in-r-software) to figure out how to add a ledgend.
+
+This plot tells us that:
+
++ That the more developed countries (Canada & Japan) have lower growth rates, which have been in a downward trend over the past ~60 years.
++ Mexico, a developing country, shows a lagged decline is growth rate. This means that the growth rates were high, and the decline occurred much later in time.
++ Algeria, a less developed country, shows a peak in growth rates in past years, which has also started to decline.
++ Together, these shared trends show that over time the population growth rate decreases.
+
+
+Lets dig a little deeper and see if the absolute value of the population numbers resemble the growth rates.
+
+```{r population.plot, echo=TRUE}
+ggplot(Pop.Growth.Rate, aes(x = year, y = Growth.Rate* 10^8))+
+  geom_path(aes( color = country, lty = country))+
+  geom_point(aes(color = country))+
+  theme_bw()+
+  ggtitle(" Do population growth rates correspond to population size? ")+
+  theme(legend.background = element_rect( linetype="solid",colour ="black"))+
+  facet_wrap(~country)+
+  geom_line(aes(y = pop))+
+  scale_y_continuous(sec.axis = sec_axis(~., name = "Population size"))
+  
+
+# I added a second y axis (on the right hand side) for the population variable. The population over the years for each continent is repersented by the black line.
+
+# I had to multiply the rates by 10^8 so the lines would be comparable. 
+
+```
+
+
+
+I had problems scaling this graph! I could not set the y axis to see the natural units of both variables (to compare the growth rate to the actual population size). So to get around this I jerry-rigged the data so we could compare the trends.
+
+
++ The trends in both variables are not exactly what I expected. I wanted to show you guys that when populations get to a certain size we see the population growth rate slows! This idea is from the theory of demographic transition - when a country becomes more developed there is a peak in growth rates followed by a decline!  
+
+ 
+
+
+
+

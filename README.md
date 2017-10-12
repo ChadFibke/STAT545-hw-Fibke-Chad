@@ -29,7 +29,8 @@ When I'm not wrking with poop enemas I like to:
 ## STAT545-hw02-Data wrangling with dplyr
 
 
-#### Quick links to my homework:
+Here I show a way to explore a new dataset (gapminder), and use dplyr functions to wrangle the dataset: select() filter() group_by() summarize() arrange()
+
 
 + [HW02.md](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW02_Dplyr/HW02_Dplyr.md) is where I take you on a coding adventure through the assignment.
 + And [Over here](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/tree/master/HW02_Dplyr/figure-markdown_github-ascii_identifiers) is where you can find my graphs!
@@ -44,7 +45,7 @@ I used a lot of resources for ggplots! There is:
 ## STAT545-hw03-Data visualization with ggplot2
 
 
-Here is my homework:
+Here I show some grammar for graphics and use ggplot2 to view the gapminder dataset:
 
 [HW03.Rmd](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW03_GGPLOT2/HW03_GGPLOT2.Rmd)
 
@@ -63,7 +64,7 @@ Here is my homework:
 
 ## STAT545-hw04- Reshaping, joining, and life lessons about data frames
 
-Here is my homework:
+Over here, I show how to subset the gapminder dataset and show how to reshape and join other datasets to gapminder using: xxx_join() 
 
 [HW04.Rmd](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW04_Reshaping_joining/HW04.Rmd)
 

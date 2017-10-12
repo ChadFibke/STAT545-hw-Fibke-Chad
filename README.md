@@ -64,7 +64,7 @@ Here I show some grammar for graphics and use ggplot2 to view the gapminder data
 
 ## STAT545-hw04- Reshaping, joining, and life lessons about data frames
 
-Over here, I show how to subset the gapminder dataset and show how to reshape and join other datasets to gapminder using: xxx_join() 
+Over here, I show how to subset the gapminder dataset and show how to reshape and join other datasets to gapminder using: spread() gather(), and xxx_join() 
 
 [HW04.Rmd](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW04_Reshaping_joining/HW04.Rmd)
 

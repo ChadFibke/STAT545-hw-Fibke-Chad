@@ -80,3 +80,5 @@ Here is my homework:
 + [Four](http://stat545.com/bit001_dplyr-cheatsheet.html) help me understand how to use the join functions!
 + The economic status for selected countries was found [Here](http://www.un.org/en/development/desa/policy/wesp/wesp_current/2014wesp_country_classification.pdf)
 + The HDI stands for **H**uman **D**evelopment **I**ndex. This index is an indirect measure the quality of life in the respective country. An HDI score of 1 = you live in a paradise, and an HDI of 0 = you live in a cruel place. The HDI information was collected [Over Here](http://hdr.undp.org/en/composite/HDI)
+
+## STAT545-hw05- Where it all comes together 

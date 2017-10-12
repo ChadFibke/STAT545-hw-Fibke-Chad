@@ -1,0 +1,170 @@
+---
+title: "HW02_Dplyr"
+author: "Chad Fibke"
+date: '2017-10-11'
+output: github_document
+---
+# 1.Installation of data set and data analysis packages 
+
+```{r}
+library(gapminder)
+```
+```{r}
+library(tidyverse)
+```
+
+# 2.Quick exploration of data
+### 2.A General analysis 
+What is the structure of gapminder?: 
+```{r}
+class(gapminder)
+```
+The gapminder is a data.frame/tibble 
+
+How many rows and columns are in this tibble?:
+```{r}
+str(gapminder)
+```
+This shows us that there are 6 variables (columns), and 1704 observations (rows).
+
+other ways to find these results?:
+```{r}
+attributes(gapminder)
+dim(gapminder)
+```
+The attributes of the data set will list all the variables names, tell us the structure, but the row names would be useless here. This attributes function could be usefull if each row was a person's name instead of obs 1. dim can also be a quick way to look at the number of rows/columns. 
+
+What is the data type of each variable?:
+```{r}
+ sapply(gapminder,class)
+```
+ sapply will list the class type for all the variables in this data set! I found how to do this [here](https://www.r-bloggers.com/find-type-of-variables-in-a-data-frame/)
+ 
+### 2.B *Basic* analysis of a categorical variable
+ 
+#### Continents 
+```{r Barplot for continent, echo=TRUE}
+CON <- gapminder %>% select(continent)
+
+table(CON)
+
+barplot(table(CON), main = "Number of observations from each continent", xlab = "continent", ylab ="Frequency", ylim = c(0, 750))
+```
+
+### 2.C *Basic* analysis of a quantitative variable
+#### Discrete: Population
+
+Lets look at the summary statistics and make a boxplot
+
+```{r Years_Boxplot, echo=TRUE}
+summary(gapminder$year)  
+
+boxplot(gapminder$year, main= "Boxplot", xlab= "Sample.1", ylab= "Years", ylim = c(1925, 2025))
+  
+
+```
+
+#### Continues: GDP Per Capita
+Lets summarize, but with a cool graph to make up for the **plain Jane** graphs above
+
+```{r GDP_Density, echo=TRUE}
+summary(gapminder$gdpPercap) 
+ggplot(gapminder, aes(gdpPercap)) +
+  geom_density(alpha = 0.5, aes(group = continent, color = continent, fill = continent)) +
+  scale_x_log10() +
+  theme_classic() +
+  labs(title = "GDPPerCapita Density Plot")
+```
+
+# 3.A deeper exploration of data
+### Lets look into how the **relative** GDP has changed for some Asian countries over time:
+ 
+I expect that gdp per capita will increace over time for **every selected country in Asia**... but lets find out!
+
+lets find the starting gdp Per Capita for all the Asian countries (1952), and lets normalize all the gdp Per capita to the first year for that corresponding country! 
+
+```{r}
+selected.gapminder <- gapminder %>% select(continent, country, year, pop, gdpPercap)
+
+Asian.Countries <- selected.gapminder %>% filter(continent == "Asia")
+
+Asian.Countries.1 <- arrange(Asian.Countries, country, year, pop)
+
+Asian.Countries.2 <-Asian.Countries.1  %>% group_by(country, year) %>%  summarize(mean_gdp=mean(gdpPercap))
+
+Asian.Countries.3 <-Asian.Countries.2 %>% mutate(relative_gdp = mean_gdp/ nth(mean_gdp,1))
+
+popsize <- Asian.Countries.1$pop
+
+fixed <- data.frame(Asian.Countries.3, popsize )
+
+head(fixed)
+
+```
+note: I could not get the population size to stay in the tibble so thats why I had to add the cooridinating population size tibble!
+
+Alright so we have used some of the cool tricks in Dplyr to digest this data, but now lets use ggplots to see what it spits out!
+```{r Some.crazy.scatter.plots, echo=TRUE}
+(Crazy<-ggplot(Asian.Countries.3, aes(x = year, y = relative_gdp))+ geom_jitter()+
+labs(y = "Relative GDP/Capita", x = "Years", title = "Asian Countries' GPD/Capita Over the Years")+
+facet_wrap(~ country, nrow = 5))
+
+```
+
+
+I tried splitting the counties across 5 rows, but this seems like a lot!I'm going to pick a view countries to compare so this doesn’t hurt your eyes.
+
+
+```{r easy.on.the.eyes, echo=TRUE}
+(Easyfix <-subset(fixed, country %in% c("Syria","Singapore", "Iraq")))
+
+Easyfix <- ggplot(Easyfix, aes(x = year, y = relative_gdp, size = popsize))+ geom_jitter()+
+labs(y = "Relative GDP/Capita", x = "Years", title = "Asian Countries' GPD/Capita Over the Years") + facet_wrap(~ country)
+
+(Easyfix <- Easyfix + geom_line(color= "darkblue", lwd = 1))
+
+
+
+
+```
+
+II used geom_line so we can see the trend in the measure of difference in relative GDP/capita between all years and 1952. I also scaled each observation by the corresponding population size!
+
+We can see that only some countries show an increased GDP/capita over time, so I was wrong because I did not consider cofounder variables (war, political stability, and much more)!
+
+
+# 4.But I want to do more!
+The provided code:
+```{r}
+filter(gapminder, country == c("Rwanda", "Afghanistan"))
+```
+This will not provide all the observations, this is because when using  == the country vector is not the same length as the filter vector 'c("Rwanda", "Afghanistan")'. So the filter will look through each observation for "Rwanda" if found the observation will be kept THEN "Afghanistan". This causes every second Afghanistan observation to be found (notice that we only have the year 1957, which is found in every second observation). This is also why we only have every first Rwanda observation as well.  
+...but this will find all the observations!
+
+```{r}
+filter(gapminder, country %in% c("Rwanda", "Afghanistan"))
+```
+
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

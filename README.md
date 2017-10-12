@@ -31,8 +31,8 @@ When I'm not wrking with poop enemas I like to:
 
 #### Quick links to my homework:
 
-+ [HW02.md](https://github.com/ChadFibke/STAT545-hw02-Fibke-Chad/blob/master/hw02.md) is where I take you on a coding adventure through the assignment.
-+ And [Over here](https://github.com/ChadFibke/STAT545-hw02-Fibke-Chad/tree/master/hw02_files/figure-markdown_github-ascii_identifiers) is where you can find my graphs!
++ [HW02.md](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW02_Dplyr/HW02_Dplyr.md) is where I take you on a coding adventure through the assignment.
++ And [Over here](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/tree/master/HW02_Dplyr/figure-markdown_github-ascii_identifiers) is where you can find my graphs!
 
 I had problems trying to pick a problem to look at in depth! Once I found an issue to look at a lot of the filtering was an issue. There was a lot of objects building up in my work environment, so at times I found myself calling on the wrong object (I thought R knew what I was thinking!). I also wanted to make some adjustments to the graph outside of the points so I had to do some googling! 
 
@@ -46,9 +46,9 @@ I used a lot of resources for ggplots! There is:
 
 Here is my homework:
 
-[HW03.Rmd](https://github.com/ChadFibke/STAT545-hw03-Fibke-Chad/blob/master/HW03.Rmd)
+[HW03.Rmd](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW03_GGPLOT2/HW03_GGPLOT2.Rmd)
 
-[HW03.md](https://github.com/ChadFibke/STAT545-hw03-Fibke-Chad/blob/master/HW03.md)
+[HW03.md](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW03_GGPLOT2/HW03_GGPLOT2.md)
 ### Report on progress
 
 + I had a lot of problems trying to plot 2 different y-variables to the same plot **AND** keeping the original units/trend. I feel like I really over did it on the line graphs, but there is a little bit of magic in each :).
@@ -65,9 +65,9 @@ Here is my homework:
 
 Here is my homework:
 
-[HW04.Rmd](https://github.com/ChadFibke/STAT545-hw04-Fibke-Chad/blob/master/HW04.Rmd)
+[HW04.Rmd](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW04_Reshaping_joining/HW04.Rmd)
 
-[HW04.md](https://github.com/ChadFibke/STAT545-hw04-Fibke-Chad/blob/master/HW04.md)
+[HW04.md](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW04_Reshaping_joining/HW04.md)
 ### Report on progress
 
 + I had problems trying to get the 2 mini data frames side by side. I tried "knitr::kable(list(DF.1,DF.2)), which would be executed properly in R, but it did not work when I tried to knit it.     

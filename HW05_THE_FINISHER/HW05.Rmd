@@ -1,0 +1,21 @@
+---
+title: "HW05_THE_FINISHER"
+author: "Chad Fibke"
+date: '2017-10-11'
+output: github_document
+---
+
+# 1.Installation of data set and data analysis packages 
+
+```{r}
+library(gapminder)
+library(tidyverse)
+
+
+```
+Ok, everything is ready to rock and roll.
+
+```{r}
+
+```
+

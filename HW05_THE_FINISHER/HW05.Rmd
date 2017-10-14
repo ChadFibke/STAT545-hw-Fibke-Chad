@@ -10,12 +10,45 @@ output: github_document
 ```{r}
 library(gapminder)
 library(tidyverse)
-
+library(forcats)
 
 ```
-Ok, everything is ready to rock and roll.
+Just some quick notes:
+
++ Comments about my code will bewithin code chunks:
+```{r}
+# Like this 
+```
++ Comments about my workflow will be outside of the code chunks. 
++ I will be working with the gapminder dataset!
+
+# 2.Factor management 
+Let's take a look at gapminder to see what variables are concidered factors:
+```{r}
+str(gapminder)
+```
+
+Now we know gapminder's variable:
+
++ Country is a factor and  has 142 different levels.
 
 ```{r}
+levels(gapminder$country) %>% 
+  head() %>% 
+  knitr::kable(col.names = "Country Factors")
+  # I'm only showing few levels to help our poor eyes
+```
+
++ Continent is a factor and has 5 different levels. 
+```{r}
+levels(gapminder$continent) %>% 
+  knitr::kable( col.names = "Continent Factors")
 
 ```
+
+
+
+
+
+
 

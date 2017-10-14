@@ -32,7 +32,7 @@ Now we know gapminder's variable:
 
 + Country is a factor and  has 142 different levels.
 
-```{r}
+```{r Country.levels, echo=TRUE}
 levels(gapminder$country) %>% 
   head() %>% 
   knitr::kable(col.names = "Country Factors")
@@ -40,14 +40,51 @@ levels(gapminder$country) %>%
 ```
 
 + Continent is a factor and has 5 different levels. 
-```{r}
+```{r Continent.levels, echo=TRUE}
 levels(gapminder$continent) %>% 
   knitr::kable( col.names = "Continent Factors")
 
 ```
 
+We now know what factors we are working with, so lets go ahead and see what we have to drop!
 
+```{r}
+ EX.Ocieania <- gapminder %>% 
+  filter(continent == "Oceania") 
+ 
 
+EX.Ocieania$country %>%   
+   fct_drop() %>% 
+  levels() 
+
+EX.Ocieania$continent %>%   
+   fct_drop() %>% 
+  nlevels() 
+```
+The above shows that when we drop the Ocieania Continent: 
+
++ One level will be dropped for continents.
++ Two levels  will be dropped for countries.
+
+Now we know how many we are dropping lets go in the revese direction and drop them:
+```{r}
+All.without.Ocieania <- gapminder %>% 
+  filter(continent != "Oceania")
+
+All.without.Ocieania$country %>%   
+   fct_drop() %>% 
+  nlevels()
+# As seen above we have ofically droped the "Australia"   "New Zealand" levels because we now only have 140 country levels.
+
+All.without.Ocieania$continent %>%   
+   fct_drop() %>% 
+  nlevels()
+# As seen above we have ofically droped the Ocieania levels because we now only have 4 continent levels.
+
+All.without.Ocieania %>% 
+  filter(continent == "Ocieania") #Also shows we have lost the Ocieania continent, 
+
+```
 
 
 

@@ -83,3 +83,11 @@ Over here, I show how to subset the gapminder dataset and show how to reshape an
 + The HDI stands for **H**uman **D**evelopment **I**ndex. This index is an indirect measure the quality of life in the respective country. An HDI score of 1 = you live in a paradise, and an HDI of 0 = you live in a cruel place. The HDI information was collected [Over Here](http://hdr.undp.org/en/composite/HDI)
 
 ## STAT545-hw05- Where it all comes together 
+
+Here I show:
+
+[HW05.Rmd](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW05_THE_FINISHER/HW05.Rmd)
+
+[HW05.md](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW05_THE_FINISHER/HW05.md)
+
+### Report on progress

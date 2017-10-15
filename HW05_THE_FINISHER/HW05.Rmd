@@ -15,7 +15,7 @@ library(forcats)
 ```
 Just some quick notes:
 
-+ Comments about my code will bewithin code chunks:
++ Comments about my code will be within code chunks:
 ```{r}
 # Like this 
 ```
@@ -35,8 +35,7 @@ Now we know gapminder's variable:
 ```{r Country.levels, echo=TRUE}
 levels(gapminder$country) %>% 
   head() %>% 
-  knitr::kable(col.names = "Country Factors")
-  # I'm only showing few levels to help our poor eyes
+  knitr::kable(col.names = "Country Factors")# I'm only showing few levels to help our poor eyes
 ```
 
 + Continent is a factor and has 5 different levels. 
@@ -46,7 +45,7 @@ levels(gapminder$continent) %>%
 
 ```
 
-We now know what factors we are working with, so lets go ahead and see what we have to drop!
+We now know what factors we are working with, so see what we have to drop! We want to drop Ocieania, but lets see what we are actually dropping:
 
 ```{r}
  EX.Ocieania <- gapminder %>% 
@@ -68,24 +67,45 @@ The above shows that when we drop the Ocieania Continent:
 
 Now we know how many we are dropping lets go in the revese direction and drop them:
 ```{r}
-All.without.Ocieania <- gapminder %>% 
+Without.Ocieania <- gapminder %>% 
   filter(continent != "Oceania")
 
-All.without.Ocieania$country %>%   
-   fct_drop() %>% 
-  nlevels()
-# As seen above we have ofically droped the "Australia"   "New Zealand" levels because we now only have 140 country levels.
+Droped.Ocieania <- Without.Ocieania %>%   
+   droplevels()# droplevels was used because it can be applied to a dataset, whereas fct_drop  is applied to a vector. 
 
-All.without.Ocieania$continent %>%   
-   fct_drop() %>% 
-  nlevels()
-# As seen above we have ofically droped the Ocieania levels because we now only have 4 continent levels.
+Droped.Ocieania$country %>%
+  nlevels()# As seen above we have ofically droped the "Australia" and "New Zealand" levels, leaving us with 140 country levels.
 
-All.without.Ocieania %>% 
-  filter(continent == "Ocieania") #Also shows we have lost the Ocieania continent, 
+Droped.Ocieania$continent %>%
+  levels()# As seen above we have ofically droped the Ocieania level, leaving us with only 4 remaining continent levels.
 
 ```
 
+We now have the Droped.Ocieania dataset with factors that are of intrest. 
 
+Let use this dataset to reorder the country factor based on the higest population size for the Americas:
+```{r population.growth.wrong, echo=TRUE}
+POP.Growth <- Droped.Ocieania %>%
+  filter(continent == "Americas") %>% 
+  select(continent, country, year, pop) %>%
+  group_by(country) %>%
+  mutate(maxPop = max(pop))# this is just cleaning up some data to calclate the mam population size per continent
+ POP.Growth %>%  
+ ggplot(aes(x = country, y = maxPop))+
+  geom_point()+
+     theme(axis.text.x = element_text(angle = 90))
 
+ 
+```
+
+This graph makes our eyes work way to hard. Lets try reordering the factors based on population size!
+
+```{r population.growth.right, echo=TRUE}
+ POP.Growth %>%  
+ ggplot(aes(x = fct_reorder(country, maxPop), y = maxPop))+
+  geom_point()+
+     theme(axis.text.x = element_text(angle = 90))+
+  xlab("Countries")+
+  ylab("Max Population Size")
+```
 

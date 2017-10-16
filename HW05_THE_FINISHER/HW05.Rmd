@@ -112,9 +112,72 @@ This graph makes our eyes work way to hard. Lets try reordering the factors base
    geom_rect(aes(xmin = 12, xmax = 16, ymin = 1, ymax = 11^7), alpha = 0.0001, color = "red")# I choose box plots because their upper whiskers are sesnistive to large outlier (max population values)
 ```
 
-I choose box plots because their upper whiskers are sesnistive to large outlier (max population values). However, the red box shows this ordering is specificly ordering the max population and other statistics like the median
+I choose box plots because their upper whiskers are sesnistive to large outlier (max population values). The red box shows this ordering is specific to max population size and doesn't account for statistics like the median. 
+
+
+# 3.Common part &File I/O 
+
+Lets continue our adventure with the Droped.Ocieania dataset. From the above graphs we see that a lot of countries in the americas have similar distributions and take up a lot of unneccsary space. Lets now concider lumping these countries and then export and import the results.
+
+
+We should be dealing with 140 country levels because we droped the Ocieania levels and only wrangled the data, but lets find out: 
+
+```{r}
+POP.Growth$country %>% 
+  nlevels()
+```
+I'm now going to drop the other unused levels:
+
+```{r}
+THE.AMERICAS <- POP.Growth %>% 
+  droplevels()
+
+THE.AMERICAS$continent %>% 
+  levels()
+
+THE.AMERICAS$country %>% 
+  levels()
+
+```
+
+lets order **AND** collapse the countries into factors that we care about:
+```{r}
+THE.AMERICAS<-ungroup(THE.AMERICAS)# We cannot reoder factors if the dataframe is grouped.
+
+THE.AMERICAS <- THE.AMERICAS %>% 
+  mutate(country = fct_reorder(country, maxPop))
+
+            
+Collapsed.Americas <- THE.AMERICAS %>% 
+  mutate(country =fct_collapse (THE.AMERICAS$country, Non_interesting_Countries = c("Trinidad and Tobago", "Jamaica", "Panama", "Uruguay", "Puerto Rico", "Costa Rica", "Nicaragua", "Paraguay", "El Salvador", "Honduras", "Haiti", "Bolivia", "Dominican Republic", "Cuba", "Guatemala","Ecuador", "Chile", "Venezuela", "Peru", "Canada", "Argentina", "Colombia" ),
+  Mexico ="Mexico",
+  Brazil ="Brazil",
+  USA = "United States")) %>% 
+  droplevels()
+
+Collapsed.Americas$country %>%
+  levels()
+
+ Collapsed.Americas %>% 
+ ggplot(aes(x = fct_reorder(country, maxPop), y = pop))+
+  geom_boxplot(aes(fill = country))+
+   theme_classic()+
+  ggtitle("Population size ditributions for the Americas ")+
+  xlab("Countries")+
+  ylab("Population Size")
+```
+
+Lets save, export then import to see if our factors are the way we left them:
+
+```{r}
+dput(Collapsed.Americas, "Collapsed.Americas-dput.txt")
+```
 
 
 
+```{r}
+rm(Collapsed.Americas)
+Collapsed.Americas_dget <- dget("Collapsed.Americas-dput.txt")
+```
 
 

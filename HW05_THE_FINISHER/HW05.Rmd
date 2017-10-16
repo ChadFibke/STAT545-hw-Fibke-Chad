@@ -93,19 +93,28 @@ POP.Growth <- Droped.Ocieania %>%
  POP.Growth %>%  
  ggplot(aes(x = country, y = maxPop))+
   geom_point()+
-     theme(axis.text.x = element_text(angle = 90))
+    ggtitle(" Max Population size \n for countries within the Americas ")+
+    theme(axis.text.x = element_text(angle = 90))
 
  
 ```
 
-This graph makes our eyes work way to hard. Lets try reordering the factors based on population size!
+This graph makes our eyes work way to hard. Lets try reordering the factors based on max population size!
 
 ```{r population.growth.right, echo=TRUE}
  POP.Growth %>%  
- ggplot(aes(x = fct_reorder(country, maxPop), y = maxPop))+
-  geom_point()+
+ ggplot(aes(x = fct_reorder(country, maxPop), y = pop))+
+  geom_boxplot()+
      theme(axis.text.x = element_text(angle = 90))+
+  ggtitle("Population size ditributions for the Americas ")+
   xlab("Countries")+
-  ylab("Max Population Size")
+  ylab("Population Size")+
+   geom_rect(aes(xmin = 12, xmax = 16, ymin = 1, ymax = 11^7), alpha = 0.0001, color = "red")# I choose box plots because their upper whiskers are sesnistive to large outlier (max population values)
 ```
+
+I choose box plots because their upper whiskers are sesnistive to large outlier (max population values). However, the red box shows this ordering is specificly ordering the max population and other statistics like the median
+
+
+
+
 

@@ -91,3 +91,5 @@ Here I show:
 [HW05.md](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW05_THE_FINISHER/HW05.md)
 
 ### Report on progress
+
+### Here are some references that really helped me:

@@ -23,7 +23,7 @@ Just some quick notes:
 + I will be working with the gapminder dataset!
 
 # 2.Factor management 
-Let's take a look at gapminder to see what variables are concidered factors:
+Let's take a look at gapminder to see what variables are considered factors:
 ```{r}
 str(gapminder)
 ```
@@ -45,51 +45,53 @@ levels(gapminder$continent) %>%
 
 ```
 
-We now know what factors we are working with, so see what we have to drop! We want to drop Ocieania, but lets see what we are actually dropping:
+We now know what factors we are working with, so see what we have to drop! We want to drop Oceania, but lets see what we are actually dropping:
 
 ```{r}
- EX.Ocieania <- gapminder %>% 
+ EX.Oceania <- gapminder %>% 
   filter(continent == "Oceania") 
  
 
-EX.Ocieania$country %>%   
+EX.Oceania$country %>%   
    fct_drop() %>% 
   levels() 
 
-EX.Ocieania$continent %>%   
+EX.Oceania$continent %>%   
    fct_drop() %>% 
   nlevels() 
 ```
-The above shows that when we drop the Ocieania Continent: 
+The above shows that when we drop the Oceania Continent: 
 
 + One level will be dropped for continents.
-+ Two levels  will be dropped for countries.
++ Two levels will be dropped for countries.
 
-Now we know how many we are dropping lets go in the revese direction and drop them:
+Now we know how many we are dropping lets go in the reverse direction and drop them:
+
 ```{r}
-Without.Ocieania <- gapminder %>% 
+Without.Oceania <- gapminder %>% 
   filter(continent != "Oceania")
 
-Droped.Ocieania <- Without.Ocieania %>%   
+Dropped.Oceania  <- Without.Oceania %>%   
    droplevels()# droplevels was used because it can be applied to a dataset, whereas fct_drop  is applied to a vector. 
 
-Droped.Ocieania$country %>%
+Dropped.Oceania$country %>%
   nlevels()# As seen above we have ofically droped the "Australia" and "New Zealand" levels, leaving us with 140 country levels.
 
-Droped.Ocieania$continent %>%
-  levels()# As seen above we have ofically droped the Ocieania level, leaving us with only 4 remaining continent levels.
+Dropped.Ocieania$continent %>%
+  levels()()# As seen above we have officially dropped the Oceania level, leaving us with only 4 remaining continent levels.
 
 ```
 
-We now have the Droped.Ocieania dataset with factors that are of intrest. 
+We now have the Dropped.Oceania dataset with factors that are of interest. 
 
-Let use this dataset to reorder the country factor based on the higest population size for the Americas:
+Let use this dataset to reorder the country factor based on the highest population size for the Americas:
+
 ```{r population.growth.wrong, echo=TRUE}
-POP.Growth <- Droped.Ocieania %>%
+POP.Growth <- Dropped.Oceania %>%
   filter(continent == "Americas") %>% 
   select(continent, country, year, pop) %>%
   group_by(country) %>%
-  mutate(maxPop = max(pop))# this is just cleaning up some data to calclate the mam population size per continent
+  mutate(maxPop = max(pop))# this is just cleaning up some data to calculate the max population size per continent
  POP.Growth %>%  
  ggplot(aes(x = country, y = maxPop))+
   geom_point()+
@@ -109,18 +111,18 @@ This graph makes our eyes work way to hard. Lets try reordering the factors base
   ggtitle("Population size ditributions for the Americas ")+
   xlab("Countries")+
   ylab("Population Size")+
-   geom_rect(aes(xmin = 12, xmax = 16, ymin = 1, ymax = 11^7), alpha = 0.0001, color = "red")# I choose box plots because their upper whiskers are sesnistive to large outlier (max population values)
+   geom_rect(aes(xmin = 12, xmax = 16, ymin = 1, ymax = 11^7), alpha = 0.0001, color = "red")
 ```
 
-I choose box plots because their upper whiskers are sesnistive to large outlier (max population values). The red box shows this ordering is specific to max population size and doesn't account for statistics like the median. 
 
+I chose box plots because their upper whiskers are sensitive to large outlier (max population values). The red box shows this ordering is not overridden when working with ggplots!
 
 # 3.Common part &File I/O 
 
-Lets continue our adventure with the Droped.Ocieania dataset. From the above graphs we see that a lot of countries in the americas have similar distributions and take up a lot of unneccsary space. Lets now concider lumping these countries and then export and import the results.
+Lets continue our adventure with the Dropped.Oceania dataset. From the above graphs we see that a lot of countries in the Americas have similar distributions and take up a lot of unnecessary space. Lets now consider lumping these countries and then export and import the results.
 
 
-We should be dealing with 140 country levels because we droped the Ocieania levels and only wrangled the data, but lets find out: 
+We should be dealing with 140 country levels because we dropped the Oceania levels and only wrangled the data, but lets find out:
 
 ```{r}
 POP.Growth$country %>% 
@@ -140,7 +142,7 @@ THE.AMERICAS$country %>%
 
 ```
 
-lets order **AND** collapse the countries into factors that we care about:
+Lets collapse **AND** reorder the countries into factors that we care about:
 ```{r}
 THE.AMERICAS<-ungroup(THE.AMERICAS)# We cannot reoder factors if the dataframe is grouped.
 

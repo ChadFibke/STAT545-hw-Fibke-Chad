@@ -77,8 +77,8 @@ Dropped.Oceania  <- Without.Oceania %>%
 Dropped.Oceania$country %>%
   nlevels()# As seen above we have ofically droped the "Australia" and "New Zealand" levels, leaving us with 140 country levels.
 
-Dropped.Ocieania$continent %>%
-  levels()()# As seen above we have officially dropped the Oceania level, leaving us with only 4 remaining continent levels.
+Dropped.Oceania$continent %>%
+  levels()# As seen above we have officially dropped the Oceania level, leaving us with only 4 remaining continent levels.
 
 ```
 
@@ -161,7 +161,7 @@ Collapsed.Americas$country %>%
   levels()
 
  Collapsed.Americas %>% 
- ggplot(aes(x = fct_reorder(country, maxPop), y = pop))+
+ ggplot(aes(x = country, y = pop))+  # I already re-ordered above!
   geom_boxplot(aes(fill = country))+
    theme_classic()+
   ggtitle("Population size ditributions for the Americas ")+
@@ -169,17 +169,64 @@ Collapsed.Americas$country %>%
   ylab("Population Size")
 ```
 
-Lets save, export then import to see if our factors are the way we left them:
+We have finished some analysis for the day and decide the save our data. 
 
+
+```{r}
+write_csv(Collapsed.Americas, "Collapsed.Americas.csv")
+```
+
+
+Boom, saved! We no longer have to worry about losing our data! (I cannot remove this dataset because Knitr has given me an error say that this object doesnt exist when I use it in later code)
+
+
+I'm now going to load this Csv file and see if our factors are still safe:
+```{r}
+Collapsed.Americas.CSV <- read_csv("Collapsed.Americas.csv")
+
+head(Collapsed.Americas.CSV)
+
+```
+#wait a second..... all my factor variables are seen as charactor variables. Let me fix that and continue so see if my variables are still ordered:
+
+```{r}
+Collapsed.Americas.CSV %>% 
+  mutate(country = factor(country), continent = factor(continent))
+
+ Collapsed.Americas.CSV %>%  
+ ggplot(aes(x =country, y = pop))+
+  geom_boxplot()+
+   theme_classic()+
+  ggtitle("Population size ditributions for the Americas ")+
+  xlab("Countries")+
+  ylab("Population Size")
+
+```
+For pet sakes all that hard work ordering these factors and now I have to repeate the prosess all over?!?!
+
+
+OR we can import/export using dput/dget instead!
 ```{r}
 dput(Collapsed.Americas, "Collapsed.Americas-dput.txt")
+
+Collapsed.Americas_dget <- dget("Collapsed.Americas-dput.txt") 
+
+
+Collapsed.Americas_dget
+
+   
+Collapsed.Americas_dget %>% 
+  ggplot(aes(x =country, y = pop))+
+  geom_boxplot()+
+   theme_classic()+
+  ggtitle("Population size ditributions for the Americas ")+
+  xlab("Countries")+
+  ylab("Population Size")
+
+
 ```
 
+The above plot shows:
 
-
-```{r}
-rm(Collapsed.Americas)
-Collapsed.Americas_dget <- dget("Collapsed.Americas-dput.txt")
-```
-
-
++ The factor order based of max population size was kept!
++ The factor names were kept!

@@ -11,6 +11,7 @@ output: github_document
 library(gapminder)
 library(tidyverse)
 library(forcats)
+library(cowplot)
 
 ```
 Just some quick notes:
@@ -44,14 +45,14 @@ levels(gapminder$continent) %>%
   knitr::kable( col.names = "Continent Factors")
 
 ```
+We now know what factors we are working with!
 
-We now know what factors we are working with, so see what we have to drop! We want to drop Oceania, but lets see what we are actually dropping:
+We want to drop Oceania, but lets see what we are actually dropping:
 
 ```{r}
  EX.Oceania <- gapminder %>% 
   filter(continent == "Oceania") 
  
-
 EX.Oceania$country %>%   
    fct_drop() %>% 
   levels() 
@@ -62,10 +63,10 @@ EX.Oceania$continent %>%
 ```
 The above shows that when we drop the Oceania Continent: 
 
-+ One level will be dropped for continents.
-+ Two levels will be dropped for countries.
++ One level will be dropped from continents.
++ Two levels will be dropped from countries.
 
-Now we know how many we are dropping lets go in the reverse direction and drop them:
+Now we know how many we are dropping...... so I'm now going to drop them:
 
 ```{r}
 Without.Oceania <- gapminder %>% 
@@ -82,56 +83,25 @@ Dropped.Oceania$continent %>%
 
 ```
 
-We now have the Dropped.Oceania dataset with factors that are of interest. 
+We have officially Dropped Oceania!
 
-Let use this dataset to reorder the country factor based on the highest population size for the Americas:
+
+We can now wrangle this data so we can later focus on the concept of reordering:
 
 ```{r population.growth.wrong, echo=TRUE}
-POP.Growth <- Dropped.Oceania %>%
+THE.AMERICAS <- Dropped.Oceania %>%
   filter(continent == "Americas") %>% 
   select(continent, country, year, pop) %>%
   group_by(country) %>%
-  mutate(maxPop = max(pop))# this is just cleaning up some data to calculate the max population size per continent
- POP.Growth %>%  
- ggplot(aes(x = country, y = maxPop))+
-  geom_point()+
-    ggtitle(" Max Population size \n for countries within the Americas ")+
-    theme(axis.text.x = element_text(angle = 90))
+  mutate(maxPop = max(pop)) %>% 
+  droplevels() %>% 
+  ungroup() 
 
- 
-```
-
-This graph makes our eyes work way to hard. Lets try reordering the factors based on max population size!
-
-```{r population.growth.right, echo=TRUE}
- POP.Growth %>%  
- ggplot(aes(x = fct_reorder(country, maxPop), y = pop))+
-  geom_boxplot()+
-     theme(axis.text.x = element_text(angle = 90))+
-  ggtitle("Population size ditributions for the Americas ")+
-  xlab("Countries")+
-  ylab("Population Size")+
-   geom_rect(aes(xmin = 12, xmax = 16, ymin = 1, ymax = 11^7), alpha = 0.0001, color = "red")
-```
-
-
-I chose box plots because their upper whiskers are sensitive to large outlier (max population values). The red box shows this ordering is not overridden when working with ggplots!
-
-# 3.Common part &File I/O 
-
-Lets continue our adventure with the Dropped.Oceania dataset. From the above graphs we see that a lot of countries in the Americas have similar distributions and take up a lot of unnecessary space. Lets now consider lumping these countries and then export and import the results.
-
-
-We should be dealing with 140 country levels because we dropped the Oceania levels and only wrangled the data, but lets find out:
-
-```{r}
-POP.Growth$country %>% 
-  nlevels()
-```
-I'm now going to drop the other unused levels:
-
-```{r}
-THE.AMERICAS <- POP.Growth %>% 
+Collapsed.Americas <- THE.AMERICAS %>% 
+  mutate(country =fct_collapse (THE.AMERICAS$country, Non_interesting_Countries = c("Trinidad and Tobago", "Jamaica", "Panama", "Uruguay", "Puerto Rico", "Costa Rica", "Nicaragua", "Paraguay", "El Salvador", "Honduras", "Haiti", "Bolivia", "Dominican Republic", "Cuba", "Guatemala","Ecuador", "Chile", "Venezuela", "Peru", "Canada", "Argentina", "Colombia" ),
+  Mexico ="Mexico",
+  Brazil ="Brazil",
+  USA = "United States")) %>% 
   droplevels()
 
 THE.AMERICAS$continent %>% 
@@ -140,14 +110,118 @@ THE.AMERICAS$continent %>%
 THE.AMERICAS$country %>% 
   levels()
 
+# this is just cleaning up some data to calculate the max population size in the Americas!
+ 
+
+
+Original.plot<-Collapsed.Americas  %>%  
+ ggplot(aes(x = country, y = maxPop))+
+  geom_point()+
+    ggtitle(" Max Population size \n for countries within the Americas ")+
+  xlab("")+
+    theme(axis.text.x = element_text(angle = 90))# I'm going to save this plot for later!
+
+ 
 ```
+**make sure to use the new color format here**
+What if we take the same data set and use arrange to move the countries around:
+
+
+```{r}
+POP.Growth.Arranged <-Collapsed.Americas %>% 
+  arrange(maxPop) 
+
+knitr::kable(head(POP.Growth.Arranged))
+#This is jsut to show that the data is arranged properly!
+
+
+Arranged.plot <- POP.Growth.Arranged %>% 
+  ggplot(aes(x = country, y = maxPop))+
+  geom_point()+
+    ggtitle(" Max Population size \n for countries within the Americas ")+
+  xlab("")+
+    theme(axis.text.x = element_text(angle = 90))# I'm going to save this plot for later as well!
+```
+
+Now lets try to reorder using fctcat!
+```{r}
+
+
+Collapsed.Americas %>%
+  mutate(country = fct_reorder(country, maxPop))# We cannot reoder factors if the dataframe is grouped.
+
+reordered.plot<- Collapsed.Americas%>%  
+ ggplot(aes(x = country, y = pop))+
+  geom_boxplot()+
+     theme(axis.text.x = element_text(angle = 90))+
+  ggtitle("Population size ditributions for the Americas ")+
+  xlab("")+
+  ylab("Population Size")+
+   geom_rect(aes(xmin = 12, xmax = 16, ymin = 1, ymax = 11^7), alpha = 0.0001, color = "red")
+```
+
+And lets try to throw of the reordered data with arrnging the data in decending order
+
+```{r}
+Mixed<- Collapsed.Americas %>% 
+  arrange(desc(maxPop)) 
+
+Mixed%>%
+  head() %>% 
+  knitr::kable()
+#This is jsut to show that the data is arranged properly!
+  
+  
+  Mix.plot <- Mixed %>% 
+  ggplot(aes(x = country, y = maxPop))+
+  geom_point()+
+    ggtitle(" Max Population size \n for countries within the Americas ")+
+  xlab("")+
+    theme(axis.text.x = element_text(angle = 90))
+  
+  
+
+
+```
+I know you are probaly freaking out that I'm not showing any graphs! (I' kinda scared to see what happens to), but I was waiting to do this:
+
+```{r}
+Original.plot
+Arranged.plot
+reordered.plot
+Mix.plot
+
+plot_grid(Original.plot, Arranged.plot, reordered.plot, Mix.plot,
+          labels = c("A", "B", "C", "D"),
+          ncol = 2,
+          align = "h")
+
+
+```
+
+
+
+
+I chose box plots because their upper whiskers are sensitive to large outlier (max population values). The red box shows this ordering is specific to the max observation **and** ignors medians.
+
+# 3.Common part &File I/O 
+
+Lets continue our adventure with the POP.GROWTH dataset by playing around with arrange and fct_reorder:
+
+
+
+
+
+
+
+
+
+From the above graphs we see that a lot of countries in the Americas have similar distributions and take up a lot of unnecessary space. Lets now consider lumping these countries and then export and import the results.
+
 
 Lets collapse **AND** reorder the countries into factors that we care about:
 ```{r}
-THE.AMERICAS<-ungroup(THE.AMERICAS)# We cannot reoder factors if the dataframe is grouped.
 
-THE.AMERICAS <- THE.AMERICAS %>% 
-  mutate(country = fct_reorder(country, maxPop))
 
             
 Collapsed.Americas <- THE.AMERICAS %>% 
@@ -230,3 +304,8 @@ The above plot shows:
 
 + The factor order based of max population size was kept!
 + The factor names were kept!
+
+
+
+
+

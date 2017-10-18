@@ -84,7 +84,7 @@ Over here, I show how to subset the gapminder dataset and show how to reshape an
 
 ## STAT545-hw05- Where it all comes together 
 
-Here I show how to play with factors, read file in and out of R, and use of Dplyr and ggplots along the way:
+Here I show how to play with factors, read files in and out of R, and using Dplyr and ggplots along the way:
 
 [HW05.Rmd](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW05_THE_FINISHER/HW05.Rmd)
 

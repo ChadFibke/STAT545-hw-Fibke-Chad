@@ -312,8 +312,3 @@ The above plot shows how "red hot" using dput/dget is because:
 + The factor names were kept (due to fct_collapse)
 + The factor order based of max population size was kept!
 
-
-
-
-
-

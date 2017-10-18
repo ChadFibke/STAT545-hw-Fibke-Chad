@@ -92,4 +92,9 @@ Here I show:
 
 ### Report on progress
 
++ I thought cow plots was fun to use, **BUT** it took me forever to figure out that to use cow plots you need to have the plot previously printed and assigned. At first I was only assigning them and I consistently got an error!
+
 ### Here are some references that really helped me:
++ [One](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html) showed me how to use cow plots!
++ [Two](http://stat545.com/block029_factors.html) showed me how to work with factors!
++ [Three](http://stat545.com/block026_file-out-in.html) showed me how to save files and bring them back into R.

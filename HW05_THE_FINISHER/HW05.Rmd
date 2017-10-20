@@ -337,9 +337,9 @@ And finally I'll attach it below:
 
 
 
-![Alt text](Redhot.pdf)
+![](Redhot.pdf)
 
 This is weird because when I knitr the above I get the photo with the option to download it, but in Github it only has this as a link to the pdf....
 
-![](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW05_THE_FINISHER/Redhot.pdf)
+
 

@@ -327,21 +327,26 @@ The above plot shows how "red hot" using dput/dget is because:
 
 I'm going to save the "red hot" boxplot from above:
 ```{r}
-ggsave(filename="Redhot.pdf", plot = Redhot, width = 8, height = 8, units = "cm", device = "pdf")
+ggsave(filename="Redhot.pdf", width = 8, height = 8, units = "cm", device = "pdf") #will save the above graph!
 
-#Explicit provision of the plot object will allow us to extract a single plot for download!(look below)
 
 ```
+ If we do not explicitly give the plot object name ggsave will save the most recent plot! If I wanted an older plot I'd have to specify the name:
+ 
+ 
+```{r}
+ggsave(filename="other.pdf", plot = easy.to.read, width = 8, height = 8, units = "cm", device = "pdf")
+```
+
 And finally I'll attach it below:
-
-
 
 
 ![Alt text](Redhot.pdf)
 
-This is weird because when I knitr the above I get the photo with the option to download it, but in Github it only has this as a link to the pdf....
+![Alt text](other.pdf)
 
-![Image](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW05_THE_FINISHER/Redhot.pdf)
+This is weird because when I knitr the above I get the photo with the option to download it, but in Github it only has this as a link to the pdf. I think this is occurring because I'm using the output: "github_document"!
+
 
 
 

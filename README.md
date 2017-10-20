@@ -95,6 +95,7 @@ Here I show how to play with factors, read files in and out of R, and using Dply
 + I thought cow plots was fun to use, **BUT** it took me forever to figure out that to use cow plots you need to have the plot previously printed and assigned. At first I was only assigning them and I consistently got an error!
 + I also had problems geting the pathway to the attached PDF. To attach a PDF to the report I had to specify the path from our work environment to to pdf... which was in the same spot, so I ended up only needing to state the name of the pdf.
 
+
 ### Here are some references that really helped me:
 + [One](https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html) showed me how to use cow plots!
 + [Two](http://stat545.com/block029_factors.html) showed me how to work with factors!

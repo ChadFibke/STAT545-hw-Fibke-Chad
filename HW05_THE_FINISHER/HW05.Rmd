@@ -67,7 +67,7 @@ EX.Oceania$continent %>%
    fct_drop() %>% 
   nlevels() 
 ```
-The above shows that when we drop the Oceania Continent: 
+The above shows that when we drop the Oceania: 
 
 + One level will be dropped from continents.
 + Two levels will be dropped from countries.
@@ -90,7 +90,7 @@ Dropped.Oceania$continent %>%
 We have officially Dropped Oceania!
 
 
-We can now wrangle this data so we can focus on the concept of reordering:
+We can now wrangle this data so we can focus on the concept of reordering. Below, I isolate countries within the Americas:
 
 ```{r Original.plot, echo=TRUE}
 THE.AMERICAS <- Dropped.Oceania %>%
@@ -119,7 +119,7 @@ MaxPOP.Original
 
 We can see that the default alphabetically orders the countries.
 
-What if we take the same data set and use arrange to move the countries around, and see what happens when we plot it:
+What if we take the same data set and use arrange to move the countries around, and then see what happens when we plot it:
 
 ```{r Arranged.plot, echo=TRUE}
 MaxPOP.Arranged <-THE.AMERICAS %>% 
@@ -140,7 +140,7 @@ Arranged.plot <- MaxPOP.Arranged %>%
 Arranged.plot
 ```
 
-Arranging the data, based on the max population size, does not have the ability to override the default alphabetical ordering when it comes to graphing. 
+Arranging the data, based on the max population size, does not have the ability to override the default alphabetical ordering when it comes to graphing. Arrange will only reorder the values within tables.
 
 
 Now lets try to reorder these countries using forcats!:
@@ -169,7 +169,7 @@ reordered.plot
 
 I chose box plots because their upper whiskers are sensitive to large outlier (max population values). The red box shows this ordering is specific to the max observation **and** ignores medians. This plot also shows:
 
-+ That reordering a factor, by another quantitative measure, can help order it within a table or plot!
++ That reordering a factor, by another quantitative measure, can help order it within both tables, and plots!
 + Too Many refers to a lot of countries have similar populations distributions, which we will correct for later!
 
 
@@ -200,7 +200,7 @@ Mix.plot
 
 ```
 
-This shows that using arrange will only effect the ordering within a table, and cannot override the factor order within a plot.
+This shows agian, that using arrange will only effect the ordering within a table, and cannot override the factor order within a plot.
 
 
  I'm going to show the use of fct_collapse to rename **AND** lump at the same time. As we saw above, a lot of countries have similar population distributions, so I'm going to call them "other":
@@ -221,10 +221,11 @@ Collapsed.Americas <- Ordered.AMERICAS %>%
   ggtitle("Population size distributions for the Americas ")+
   xlab("")+
   ylab("Population Size")+
-   scale_fill_manual(values=brewer.pal(n=4, "RdGy"))
+   scale_fill_manual(values=brewer.pal(n=4, "Greens"))
   easy.to.read
 ```
 
+The more green the more people!
 
 Below, I’ve use cow plots to show the difference that fct_collapse made by comparing 2 graphs:
 
@@ -246,7 +247,7 @@ Collapsed.Americas$country %>%
 
 ```
 
-We have finished some analysis for the day (what we have done above) and decide the save our data:
+We have finished some analysis for the day (what we have done above) and decide to save our data:
 ```{r}
 write_csv(Collapsed.Americas, "Collapsed.Americas.csv")
 ```
@@ -260,14 +261,17 @@ I'm now going to load this Csv file and see if our factors are still safe:
 ```{r Collapsed.Americas.CSV, echo= TRUE}
 Collapsed.Americas.CSV <- read_csv("Collapsed.Americas.csv")
 
-knitr::kable(head(Collapsed.Americas.CSV))
+head(Collapsed.Americas.CSV)# I did not use kable to show the table because I want you to see that variable types 
 
 ```
-wait a second..... all my factor variables are seen as charactor variables. Let me fix that and continue so see if my variables are still ordered:
+
+
+wait a second..... all my factor variables are seen as charactor variables. Let me fix that and continue to see if our variables are still ordered:
 
 ```{r HOW.csv.boring, echo= TRUE}
 Collapsed.Americas.CSV %>% 
   mutate(country = factor(country), continent = factor(continent)) %>% 
+  head() %>% 
   knitr::kable()
 
  Collapsed.Americas.CSV %>%  
@@ -295,7 +299,8 @@ dput(Collapsed.Americas, "Collapsed.Americas-dput.txt")
 Collapsed.Americas_dget <- dget("Collapsed.Americas-dput.txt") 
 
 
-Collapsed.Americas_dget %>% 
+Collapsed.Americas_dget %>%
+  head() %>% 
   knitr::kable()
 
    
@@ -315,5 +320,5 @@ Collapsed.Americas_dget %>%
 The above plot shows how "red hot" using dput/dget is because:
 
 + The factor names were kept (due to fct_collapse)
-+ The factor order based of max population size was kept!
++ The factor order, based of max population size, was also kept!
 

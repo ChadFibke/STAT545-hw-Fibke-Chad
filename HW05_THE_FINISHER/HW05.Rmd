@@ -360,9 +360,9 @@ ggsave(filename="other.pdf", plot = easy.to.read, width = 8, height = 8, units =
 Now I'll attach it below:
 
 
-![Redhot.pdf](Redhot.pdf)
+![Alt text](Redhot.pdf)
 
-![other.pdf](other.pdf)
+![Alt text](other.pdf)
 
 This is weird because when I knitr the above I get the photo with the option to download it, but in Github it only has this as a link to the pdf. I think this is occurring because I'm using the output: "github_document"!
 

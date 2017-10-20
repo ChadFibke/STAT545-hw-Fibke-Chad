@@ -328,7 +328,7 @@ The above plot shows how "red hot" using dput/dget is because:
 I'm going to save the "red hot" boxplot from above:
 ```{r}
 
-ggsave(filename="Redhot.pdf", plot = Redhot)
+ggsave(filename="Redhot.pdf", plot = Redhot, width = 15, height = 23, units = "cm", device = "pdf")
 ```
 And finally I'll attach it below:
-
+![Alt text](https://github.com/ChadFibke/STAT545-hw-Fibke-Chad/blob/master/HW05_THE_FINISHER/Redhot.pdf)

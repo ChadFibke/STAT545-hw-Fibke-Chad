@@ -261,7 +261,7 @@ I'm now going to load this Csv file and see if our factors are still safe:
 ```{r Collapsed.Americas.CSV, echo= TRUE}
 Collapsed.Americas.CSV <- read_csv("Collapsed.Americas.csv")
 
-head(Collapsed.Americas.CSV)# I did not use kable to show the table because I want you to see the variable types 
+head(Collapsed.Americas.CSV)# I did not use kable to show the table because I wanted to show you the variable types  
 
 ```
 

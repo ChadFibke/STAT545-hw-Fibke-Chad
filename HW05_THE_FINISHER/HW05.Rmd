@@ -69,7 +69,7 @@ The above shows that when we drop the Oceania:
 + One level will be dropped from continents.
 + Two levels will be dropped from countries.
 
-Now we know how many we are dropping...... so I'm now going to drop them:
+I'm now going to drop them:
 
 ```{r}
 Dropped.Oceania <- gapminder %>% 
@@ -84,10 +84,10 @@ Dropped.Oceania$continent %>%
 
 ```
 
-We have officially Dropped Oceania!
+We have officially dropped Oceania!
 
 
-We can now wrangle this data so we can focus on the concept of reordering. Below, I isolate countries within the Americas:
+We can now wrangle this data into a much smaller set, so we can focus on the concept of reordering by max population size. Below, I isolate countries within the Americas:
 
 ```{r Original.plot, echo=TRUE}
 THE.AMERICAS <- Dropped.Oceania %>%
@@ -116,16 +116,21 @@ MaxPOP.Original
 
 We can see that the default alphabetically orders the countries.
 
-What if we take the same data set and use arrange to move the countries around, and then see what happens when we plot it:
+What if we use arrange to move the countries around, and then plot it:
 
-```{r Arranged.plot, echo=TRUE}
+```{r Arranged.kable, echo=TRUE}
 MaxPOP.Arranged <-THE.AMERICAS %>% 
   arrange(maxPop) 
 
 knitr::kable(head(MaxPOP.Arranged))
-#This is just to show that the data is arranged properly!
 
+```
 
+This table is just to show that the data is arranged properly!
+
+What about the plot:
+
+```{r Arranged.plot, echo=TRUE}
 Arranged.plot <- MaxPOP.Arranged %>% 
   ggplot(aes(x = country, y = maxPop))+
   geom_point(color = "red")+
@@ -137,7 +142,8 @@ Arranged.plot <- MaxPOP.Arranged %>%
 Arranged.plot
 ```
 
-Arranging the data, based on the max population size, does not have the ability to override the default alphabetical ordering when it comes to graphing. Arrange will only reorder the values within tables.
+
+Arranging the data, based on the max population size, does not have the ability to override the default alphabetical ordering when it comes to graphing. Arrange will only reorder values within tables.
 
 
 Now lets try to reorder these countries using forcats!:
@@ -166,12 +172,11 @@ reordered.plot
 
 I chose box plots because their upper whiskers are sensitive to large outlier (max population values). The red box shows this ordering is specific to the max observation **and** ignores medians. This plot also shows:
 
-+ That reordering a factor, by another quantitative measure, can help order it within both tables, and plots!
++ That reordering a factor, by another quantitative measure, can help order it within plots!
 + Too Many refers to a lot of countries have similar populations distributions, which we will correct for later!
 
 
 lets try to mess up the reordered data with arranging the data in descending order
-
 
 ```{r Mix.plot, echo= TRUE}
 Mixed<- Ordered.AMERICAS %>% 
@@ -179,8 +184,7 @@ Mixed<- Ordered.AMERICAS %>%
 
 Mixed%>%
   head() %>% 
-  knitr::kable()
-#This is just to show that the data is arranged properly!
+  knitr::kable()#This is just to show that the data is arranged properly!
   
   
   Mix.plot <- Mixed %>% 
@@ -197,10 +201,10 @@ Mix.plot
 
 ```
 
-This shows agian, that using arrange will only effect the ordering within a table, and cannot override the factor order within a plot.
+This plot shows that using arrange will only effect the ordering within a table, and cannot override the factor order within a plot.
 
 
- I'm going to show the use of fct_collapse to rename **AND** lump at the same time. As we saw above, a lot of countries have similar population distributions, so I'm going to call them "other":
+I'm going to use of fct_collapse to rename **AND** lump at the same time. As we saw above, a lot of countries have similar population distributions, so I'm going to call them "other":
 
 
 ```{r easy.to.read.plot, echo= TRUE}
@@ -285,8 +289,9 @@ Collapsed.Americas.CSV %>%
 
 The above plot shows how "boring" using the write_csv()/read_csv() is because:
 
-+ The factor names were kept, but this is also one of the strengths of fct_collapse.
-+ The factor order, based of max population size, was **not** kept!
++ This method will convert factors into character types.
++ The factor names are kept, but this is also one of the strengths of fct_collapse.
++ The factor order, based of max population size, is **not** kept!
 
 
 OR we can import/export using dput/dget instead!
@@ -297,8 +302,7 @@ Collapsed.Americas_dget <- dget("Collapsed.Americas-dput.txt")
 
 
 Collapsed.Americas_dget %>%
-  head() %>% 
-  knitr::kable()
+  head() 
 
    
 Redhot <- Collapsed.Americas_dget %>% 
@@ -316,11 +320,29 @@ Redhot
 
 The above plot shows how "red hot" using dput/dget is because:
 
++ This method will keep variables as factors.
 + The factor names were kept (due to fct_collapse)
 + The factor order, based of max population size, was also kept!
 
+# 4.Visualization design
 
-# 4.Writing figures to file
+I have already reordered countries by max population size, but lets add some size as well to reinforce the idea that larger tells us more people are found in these countries:
+```{r}
+Ordered.AMERICAS%>%  
+ ggplot(aes(x = country, y = maxPop, fill = country))+
+  geom_point(aes(size = maxPop))+
+     theme(axis.text.x = element_text(angle = 90),
+             axis.text = element_text(size = 10))+
+  ggtitle("Population size distributions for the Americas ")+
+  xlab("")+
+  ylab("Population Size")+
+  theme(legend.position = "")
+```
+
+
+Other coloring methods have been used in this report as well!
+
+# 5.Writing figures to file
 
 I'm going to save the "red hot" boxplot from above:
 ```{r}
@@ -338,9 +360,9 @@ ggsave(filename="other.pdf", plot = easy.to.read, width = 8, height = 8, units =
 Now I'll attach it below:
 
 
-![Alt text](Redhot.pdf)
+![Redhot.pdf](Redhot.pdf)
 
-![Alt text](other.pdf)
+![other.pdf](other.pdf)
 
 This is weird because when I knitr the above I get the photo with the option to download it, but in Github it only has this as a link to the pdf. I think this is occurring because I'm using the output: "github_document"!
 
